@@ -1,5 +1,6 @@
 import regex as re
 from collections import Counter
+import pickle
 
 PAT = re.compile(r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
 
@@ -120,6 +121,8 @@ def train_bpe(input_path: str, vocab_size: int, special_tokens: list[str]):
     
     num_merges = vocab_size - len(vocab)
     
+    #TODO: dont call calc_pair_stats every time
+    
     for i in range(num_merges):
         
         pairs_count = calc_pair_stats(words_split)
@@ -153,6 +156,15 @@ if __name__ == '__main__':
     
     vocab, merges = train_bpe(INPUT_FILE, VOCAB_SIZE, SPECIAL_TOKENS)
     
+    vocab_filepath = "my_tokenizer.vocab"
+    merges_filepath = "my_tokenizer.merges"
+    
+    with open(vocab_filepath, 'wb') as f:
+        pickle.dump(vocab, f)
+
+    with open(merges_filepath, 'wb') as f:
+        pickle.dump(merges, f)
+        
     
     
     
